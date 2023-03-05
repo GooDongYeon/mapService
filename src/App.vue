@@ -9,14 +9,21 @@
         <i class="fa-solid fa-minus"></i>
       </button>
     </div>
-    <KakaoMap
-      class="kmap"
-      :options="mapOption" />
+
+    <div class="map-area">
+      <div class="harbors">
+        <div class="harbor" v-for="hbr in harbors" :key="hbr.seq" @click="showOnMap(hbr)">
+          <h4>{{ hbr.place }}</h4>
+        </div>
+      </div>
+      <KakaoMap class="kmap" :options="mapOption" />
+    </div>
   </div>
 </template>
 
 <script>
 import KakaoMap from './components/map/KakaoMap.vue'
+import api from './service/api'
 export default {
   components: {
     KakaoMap,
@@ -30,9 +37,14 @@ export default {
         },
         level: 8,
       },
+      harbors: [], // empty
     }
   },
   mounted() {
+    api.harbor.all((res) => {
+      console.log("[삼정타워]", res.harbors);
+      this.harbors = res.harbors;
+    })
     // let kakao = window.kakao
     // console.log(this.$refs.map) // should be not null
 
@@ -51,6 +63,13 @@ export default {
       const level = Math.max(3, this.mapOption.level + delta) // min level 3
       this.mapOption.level = level
       console.log(this.mapOption.level)
+    },
+    showOnMap(harbor) {
+      console.log('[center]', harbor);
+      this.mapOption.center = {
+        lat: harbor.lat,
+        lng: harbor.lng,
+      }
     }
   }
 }
@@ -61,16 +80,44 @@ button {
   border: 1px solid transparent;
   padding: 6px;
   background-color: #efefefdd;
-  border-radius: 6px  ;
+  border-radius: 6px;
 }
+
 button:hover {
   background-color: #ddd;
   border-color: #ddd;
   cursor: pointer;
 }
+
 button:active {
   background-color: #aaa;
   border-color: #aaa;
+}
+
+.map-area {
+  display: flex;
+}
+
+.kmap {
+  flex: 1 1 auto;
+}
+
+.harbors .harbor {
+  padding: 10px;
+  border: 1px solid transparent;
+}
+.harbors .harbor:hover {
+  background-color: aliceblue;
+  border-color: #6a9dff;
+  cursor: pointer;
+}
+.harbors .harbor:active {
+  background-color: rgb(166, 197, 224);
+  border-color: #4471c5;
+  cursor: pointer;
+}
+.harbors .harbor h4 {
+  margin: 0;
 }
 </style>
 
