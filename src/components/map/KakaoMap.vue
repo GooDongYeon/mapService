@@ -4,6 +4,7 @@
 </template>
 
 <script>
+let kakao = window.kakao
 export default {
   props: ['options'],
   data() {
@@ -16,9 +17,13 @@ export default {
       console.log(`[LEVEL CHANGD] ${prev} => ${cur}`)
       this.mapInstance.setLevel(cur)
     },
+    "options.center"(cur) {
+      console.log('[NEW CENTER]', cur.lat, cur.lng);
+      this.mapInstance.setCenter(new kakao.maps.LatLng(cur.lat, cur.lng))
+    }
   },
   mounted() {
-    let kakao = window.kakao
+    kakao = kakao || window.kakao
     console.log(this.$refs.map)
 
     var container = this.$refs.map
@@ -35,7 +40,6 @@ export default {
 
 <style>
 .kmap {
-  width: 100%;
   height: 600px;
 }
 </style>
