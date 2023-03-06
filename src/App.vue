@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>테스트</h1>
     <h3>kakao map demo(center, level)</h3>
     <div class="controll">
       <button @click="zoom(1)">
