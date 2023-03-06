@@ -17,8 +17,8 @@ export default {
       console.log(`[LEVEL CHANGD] ${prev} => ${cur}`)
       this.mapInstance.setLevel(cur)
     },
-    "options.center"(cur) {
-      console.log('[NEW CENTER]', cur.lat, cur.lng);
+    'options.center'(cur) {
+      console.log('[NEW CENTER]', cur.lat, cur.lng)
       this.mapInstance.setCenter(new kakao.maps.LatLng(cur.lat, cur.lng))
     }
   },

@@ -5,16 +5,16 @@ const api = {
       const harbors = [
         {
           seq: 1,
-          place: "삼정타워",
+          place: '삼정타워',
           lat: 35.152719955194,
           lng: 129.0593731551,
         }
-      ];
+      ]
       callback({
         success: true, harbors
-      });
+      })
     }
   }
 }
 
-export default api;
+export default api
