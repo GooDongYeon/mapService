@@ -7,13 +7,13 @@ class MarkerHandler {
     this.options = options
   }
   add(userData, fnConv) {
-    userData.forEach( (data) => {
+    userData.forEach(data => {
       const option = fnConv(data) // this is harbor
 
       // option.lat, option.lng
       // const markerInstance = new kakao.maps.Marker()
       const markerInstance = new kakao.maps.Marker({
-        map: this.vueMap.markerInstance,
+        map: this.vueMap.mapInstance,
         position: new kakao.maps.LatLng(option.lat, option.lng),
       })
       markerInstance.$$ = {

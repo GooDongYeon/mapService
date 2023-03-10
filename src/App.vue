@@ -51,6 +51,7 @@ export default {
       harbors: [], // emptyt
       markers: null, // marker handler
       activeHarbor: null,
+      mapInstance: null
     }
   },
   mounted() {
@@ -62,9 +63,7 @@ export default {
         this.activeHarbor = harbor
       }
     })
-    this.markers.forEach((marker) => {
-      marker.setMap()
-    })
+    
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
@@ -72,7 +71,7 @@ export default {
       // create markers
       this.markers.add(this.harbors, (harbor) => {
         return {
-          lat : harbor.lat, lng : harbor.lng
+          lat: harbor.lat, lng: harbor.lng
         }
       })
     })
@@ -89,6 +88,7 @@ export default {
         lat: harbor.lat,
         lng: harbor.lng,
       }
+      this.mapOption.level = 3
     }
   }
 }
