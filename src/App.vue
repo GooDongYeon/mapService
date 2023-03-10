@@ -16,12 +16,14 @@
           v-for="hbr in harbors"
           :key="hbr.seq"
           class="harbor"
+          :class="{active: hbr === activeHarbor}"
           @click="showOnMap(hbr)">
           <h4>{{ hbr.place }}</h4>
         </div>
       </div>
 
       <KakaoMap
+        ref="kmap"
         class="kmap"
         :options="mapOption" />
     </div>
@@ -31,6 +33,8 @@
 <script>
 import KakaoMap from './components/map/KakaoMap.vue'
 import api from './service/api'
+import MarkerHandler from './components/map/marker-handler'
+
 export default {
   components: {
     KakaoMap,
@@ -44,13 +48,33 @@ export default {
         },
         level: 8,
       },
-      harbors: [], // empty
+      harbors: [], // emptyt
+      markers: null, // marker handler
+      activeHarbor: null,
     }
   },
   mounted() {
+    const vueKakaoMap = this.$refs.kmap
+
+    this.markers = new MarkerHandler(vueKakaoMap, {
+      markerClicked: (harbor) => {
+        console.log('[clicked]', harbor)
+        this.activeHarbor = harbor
+      }
+    })
+    this.markers.forEach((marker) => {
+      marker.setMap()
+    })
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
+
+      // create markers
+      this.markers.add(this.harbors, (harbor) => {
+        return {
+          lat : harbor.lat, lng : harbor.lng
+        }
+      })
     })
   },
   methods: {
