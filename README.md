@@ -22,7 +22,10 @@ npm run build
 ```
 npm run lint
 ```
-
+### Add rule to .eslintrc.json that slot will not eat in vue3
+```
+"vue/no-deprecated-slot-attribute": "off"
+```
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 # mapService
