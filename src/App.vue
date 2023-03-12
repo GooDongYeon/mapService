@@ -25,7 +25,21 @@
       <KakaoMap
         ref="kmap"
         class="kmap"
-        :options="mapOption" />
+        :options="mapOption">
+        <div
+          ref="harborOverlay"
+          slot="overaly"
+          class="overlay-popup">
+          <div v-if="overlayHarber">
+            <h3>{{ overlayHarber.place }}</h3>
+            <div>{{ overlayHarber.addr }}</div>
+            <a
+              class="close"
+              href="#"
+              @click.prevent="closeOverlay()">close</a>
+          </div>
+        </div>
+      </KakaoMap>
     </div>
   </div>
 </template>
@@ -34,6 +48,7 @@
 import KakaoMap from './components/map/KakaoMap.vue'
 import api from './service/api'
 import MarkerHandler from './components/map/marker-handler'
+import KakaoOverlay from './components/map/overlay'
 
 export default {
   components: {
@@ -51,7 +66,10 @@ export default {
       harbors: [], // emptyt
       markers: null, // marker handler
       activeHarbor: null,
-      mapInstance: null
+      mapInstance: null,
+
+      overlay: null, // overlay 인스턴스
+      overlayHarber: null, // overlay 보여줄 것
     }
   },
   mounted() {
@@ -61,9 +79,14 @@ export default {
       markerClicked: (harbor) => {
         console.log('[clicked]', harbor)
         this.activeHarbor = harbor
+        // 마커 클릭시
+        this.overlayHarber = harbor
+        this.overlay.showAt(harbor.lat, harbor.lng)
       }
     })
     
+    this.overlay = new KakaoOverlay(vueKakaoMap, this.$refs.harborOverlay)
+
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
@@ -89,6 +112,9 @@ export default {
         lng: harbor.lng,
       }
       this.mapOption.level = 3
+    },
+    closeOverlay() {
+      this.overlay.hide()
     }
   }
 }
@@ -119,6 +145,41 @@ button:active {
 
 .kmap {
   flex: 1 1 auto;
+}
+.kmap .overlay-popup {
+  background-color: #ffffffcc;
+  box-shadow: 0 0 8px #0000004d, 0 0 1px 2px #00000022;
+  max-width: 200px;
+  min-width: 160px;
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.kmap .overlay-popup h3 {
+  margin: 0;
+  padding: 8px;
+  padding-right: 24px;
+  background-color: #ed4215;
+  color: white;
+  font-weight: 400;
+  font-size: 16px;
+}
+.kmap .overlay-popup h3 .addr {
+  padding: 8px;
+  white-space: break-spaces;
+}
+.kmap .overlay-popup h3 .addr .close {
+  color: black;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  transform: translate(-50% -50%);
+  background-color: white;
+  border-radius: 100%;
+  line-height: 0;
+  padding: 6px;
+  box-shadow: 0 0 6px #0000004d;
 }
 
 .map-area .harbors .harbor {
