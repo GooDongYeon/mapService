@@ -16,7 +16,7 @@
           v-for="hbr in harbors"
           :key="hbr.seq"
           class="harbor"
-          :class="{active: hbr === activeHarbor}"
+          :class="{ active: hbr === activeHarbor }"
           @click="showOnMap(hbr)">
           <h4>{{ hbr.place }}</h4>
         </div>
@@ -26,6 +26,13 @@
         ref="kmap"
         class="kmap"
         :options="mapOption" />
+      <div
+        ref="harborOverlay"
+        slot="overlay"
+        class="overlay-popup">
+        <h3>오버레이 화면</h3>
+        <div>이곳에 정보를 표시함</div>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +41,7 @@
 import KakaoMap from './components/map/KakaoMap.vue'
 import api from './service/api'
 import MarkerHandler from './components/map/marker-handler'
+import KakaoOverlay from './components/map/overlay'
 
 export default {
   components: {
@@ -50,8 +58,11 @@ export default {
       },
       harbors: [], // emptyt
       markers: null, // marker handler
-      activeHarbor: null,
-      mapInstance: null
+      activeHarbor: null, // selected harbor
+      mapInstance: null,
+
+      overlay: null, // overlay 인스턴스
+      overlayHarbor: null
     }
   },
   mounted() {
@@ -59,11 +70,15 @@ export default {
 
     this.markers = new MarkerHandler(vueKakaoMap, {
       markerClicked: (harbor) => {
-        console.log('[clicked]', harbor)
-        this.activeHarbor = harbor
+        console.log('[clicked]', harbor.lat, harbor.lng)
+        this.mapOption.level = 3
+        this.showOnMap(harbor)
+        // 마커 클릭 시
+        this.overlay.showAt(harbor.lat, harbor.lng)
       }
     })
-    
+    this.overlay = new KakaoOverlay(vueKakaoMap, this.$refs.harborOverlay)
+
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
@@ -117,26 +132,34 @@ button:active {
   display: flex;
 }
 
-.kmap {
-  flex: 1 1 auto;
-}
-
 .map-area .harbors .harbor {
   padding: 10px;
   border: 1px solid transparent;
 }
+
 .map-area .harbors .harbor:hover {
   background-color: aliceblue;
   border-color: #6a9dff;
   cursor: pointer;
 }
+
 .map-area .harbors .harbor:active {
   background-color: rgb(166, 197, 224);
   border-color: #4471c5;
   cursor: pointer;
 }
+
 .map-area .harbors .harbor h4 {
   margin: 0;
+}
+
+.kmap {
+  flex: 1 1 auto;
+}
+
+.kmap .overlay-popup {
+  background-color: #ffffffcc;
+  box-shadow: 0 0 8px #0000004d;
 }
 </style>
 

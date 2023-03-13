@@ -1,5 +1,6 @@
 <template>
   <div ref="map">
+    <slot name="overlay"></slot>
   </div>
 </template>
 
