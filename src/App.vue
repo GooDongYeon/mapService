@@ -30,19 +30,18 @@
         ref="harborOverlay"
         slot="overlay"
         class="overlay-popup">
-<<<<<<< HEAD
         <div v-if="overlayHarber">
           <h3>{{ overlayHarber.place }}</h3>
-          <div>{{ overlayHarber.addr }}</div>
+          <div class="addr">
+            {{ overlayHarber.addr }}
+          </div>
           <a
-            class="close"
             href="#"
-            @click.prevent="closeOverlay()">close</a>
+            class="close"
+            @click.prevent="closeOverlay()">
+            <span><i class="fa-solid fa-xmark"></i></span>
+          </a>
         </div>
-=======
-        <h3>오버레이 화면</h3>
-        <div>이곳에 정보를 표시함</div>
->>>>>>> d75974e425c440c88021df18ea3b1d6c9321d584
       </div>
     </div>
   </div>
@@ -70,7 +69,9 @@ export default {
       harbors: [], // emptyt
       markers: null, // marker handler
       activeHarbor: null,
-      mapInstance: null
+      mapInstance: null,
+      overlay: null,
+      overlayHarber: null
     }
   },
   mounted() {
@@ -79,25 +80,17 @@ export default {
     this.markers = new MarkerHandler(vueKakaoMap, {
       markerClicked: (harbor) => {
         console.log('[clicked]', harbor)
-<<<<<<< HEAD
-        // this.activeHarbor = harbor
-        this.showOnMap(harbor)
         this.mapOption.level = 3
-        // 마커 클릭시
-        this.overlayHarber = harbor
+        this.showOnMap(harbor)
+
+        // 마커 클릭 시
         this.overlay.showAt(harbor.lat, harbor.lng)
-      }
+        this.overlayHarber = harbor
+      },
     })
-    
+
     this.overlay = new KakaoOverlay(vueKakaoMap, this.$refs.harborOverlay)
 
-
-=======
-        this.activeHarbor = harbor
-      }
-    })
-    
->>>>>>> d75974e425c440c88021df18ea3b1d6c9321d584
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
@@ -122,7 +115,7 @@ export default {
         lat: harbor.lat,
         lng: harbor.lng,
       }
-      this.mapOption.level = 3
+      this.mapOption.level = 6
     },
     closeOverlay() {
       this.overlay.hide()
@@ -145,17 +138,13 @@ button:hover {
   cursor: pointer;
 }
 
-button:active {
+button:hover:active {
   background-color: #aaa;
   border-color: #aaa;
 }
 
 .map-area {
   display: flex;
-}
-
-.kmap {
-  flex: 1 1 auto;
 }
 
 .map-area .harbors .harbor {
@@ -172,9 +161,11 @@ button:active {
 .map-area .harbors .harbor:active {
   background-color: rgb(166, 197, 224);
   border-color: #4471c5;
-  cursor: pointer;
 }
-
+.map-area .harbors .harbor .active {
+  background-color: rgb(253, 229, 150);
+  border-color: rgb(211, 173, 3);
+}
 .map-area .harbors .harbor h4 {
   margin: 0;
 }
@@ -186,6 +177,40 @@ button:active {
 .kmap .overlay-popup {
   background-color: #ffffffcc;
   box-shadow: 0 0 8px #0000004d;
+  max-width: 200px;
+  min-width: 160px;
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.kmap .overlay-popup h3 {
+  margin: 0;
+  padding: 8px;
+  padding-right: 24px;
+  background-color: lightskyblue;
+  color: white;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.addr {
+  padding: 8px;
+  white-space: break-spaces;
+}
+
+.close {
+  color: black;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 100%;
+  line-height: 0;
+  padding: 6px;
+  box-shadow: 0 0 6px #0000004d;
 }
 </style>
 
