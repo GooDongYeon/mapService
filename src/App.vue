@@ -25,21 +25,20 @@
       <KakaoMap
         ref="kmap"
         class="kmap"
-        :options="mapOption">
-        <div
-          ref="harborOverlay"
-          slot="overaly"
-          class="overlay-popup">
-          <div v-if="overlayHarber">
-            <h3>{{ overlayHarber.place }}</h3>
-            <div>{{ overlayHarber.addr }}</div>
-            <a
-              class="close"
-              href="#"
-              @click.prevent="closeOverlay()">close</a>
-          </div>
+        :options="mapOption" />
+      <div
+        ref="harborOverlay"
+        slot="overlay"
+        class="overlay-popup">
+        <div v-if="overlayHarber">
+          <h3>{{ overlayHarber.place }}</h3>
+          <div>{{ overlayHarber.addr }}</div>
+          <a
+            class="close"
+            href="#"
+            @click.prevent="closeOverlay()">close</a>
         </div>
-      </KakaoMap>
+      </div>
     </div>
   </div>
 </template>
@@ -78,7 +77,9 @@ export default {
     this.markers = new MarkerHandler(vueKakaoMap, {
       markerClicked: (harbor) => {
         console.log('[clicked]', harbor)
-        this.activeHarbor = harbor
+        // this.activeHarbor = harbor
+        this.showOnMap(harbor)
+        this.mapOption.level = 3
         // 마커 클릭시
         this.overlayHarber = harbor
         this.overlay.showAt(harbor.lat, harbor.lng)
@@ -86,6 +87,7 @@ export default {
     })
     
     this.overlay = new KakaoOverlay(vueKakaoMap, this.$refs.harborOverlay)
+
 
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
