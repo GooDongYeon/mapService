@@ -58,11 +58,8 @@ export default {
       },
       harbors: [], // emptyt
       markers: null, // marker handler
-      activeHarbor: null, // selected harbor
-      mapInstance: null,
-
-      overlay: null, // overlay 인스턴스
-      overlayHarbor: null
+      activeHarbor: null,
+      mapInstance: null
     }
   },
   mounted() {
@@ -70,15 +67,11 @@ export default {
 
     this.markers = new MarkerHandler(vueKakaoMap, {
       markerClicked: (harbor) => {
-        console.log('[clicked]', harbor.lat, harbor.lng)
-        this.mapOption.level = 3
-        this.showOnMap(harbor)
-        // 마커 클릭 시
-        this.overlay.showAt(harbor.lat, harbor.lng)
+        console.log('[clicked]', harbor)
+        this.activeHarbor = harbor
       }
     })
-    this.overlay = new KakaoOverlay(vueKakaoMap, this.$refs.harborOverlay)
-
+    
     api.harbor.all((res) => {
       console.log('[부산광역시]', res.harbors)
       this.harbors = res.harbors
@@ -104,6 +97,9 @@ export default {
         lng: harbor.lng,
       }
       this.mapOption.level = 3
+    },
+    closeOverlay() {
+      this.overlay.hide()
     }
   }
 }
@@ -130,6 +126,10 @@ button:active {
 
 .map-area {
   display: flex;
+}
+
+.kmap {
+  flex: 1 1 auto;
 }
 
 .map-area .harbors .harbor {
